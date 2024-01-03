@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+//   kotlin("kapt")
 }
 
 android {
@@ -66,7 +69,22 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation ("io.insert-koin:koin-android:3.5.3")
-    implementation ("io.insert-koin:koin-androidx-compose:3.5.3")
-    testImplementation("io.insert-koin:koin-test-junit4:3.5.3")
+    val koinVersion = "3.5.3"
+    implementation ("io.insert-koin:koin-android:$koinVersion")
+    implementation ("io.insert-koin:koin-androidx-compose:$koinVersion")
+    testImplementation("io.insert-koin:koin-test-junit4:$koinVersion")
+
+    val retrofit_version = "2.9.0"
+   val moshi_converter_version = "2.9.0"
+   val moshi_version = "1.13.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
+
+    implementation("com.squareup.retrofit2:converter-moshi:$moshi_converter_version")
+    implementation ("com.squareup.moshi:moshi-kotlin:$moshi_version")
+//    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
 }
+
+//kapt {
+//    correctErrorTypes = true
+//}
