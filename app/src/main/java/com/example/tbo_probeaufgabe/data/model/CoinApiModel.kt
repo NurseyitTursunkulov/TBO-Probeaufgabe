@@ -37,11 +37,11 @@ data class CoinApiModel(
     @Json(name = "market_cap_change_percentage_24h")
     val marketCapChangePercentage24h: Double,
     @Json(name = "circulating_supply")
-    val circulatingSupply: Long,
+    val circulatingSupply: Double,
     @Json(name = "total_supply")
-    val totalSupply: Long,
+    val totalSupply: Double,
     @Json(name = "max_supply")
-    val maxSupply: Long,
+    val maxSupply: Double?,
     val ath: Double,
     @Json(name = "ath_change_percentage")
     val athChangePercentage: Double,

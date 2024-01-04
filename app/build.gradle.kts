@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 //   kotlin("kapt")
 }
 
@@ -50,6 +51,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    kotlin {
+        jvmToolchain(8)
+    }
 }
 
 dependencies {
@@ -76,13 +80,15 @@ dependencies {
 
     val retrofit_version = "2.9.0"
    val moshi_converter_version = "2.9.0"
-   val moshi_version = "1.13.0"
+   val moshi_version = "1.14.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
 
     implementation("com.squareup.retrofit2:converter-moshi:$moshi_converter_version")
     implementation ("com.squareup.moshi:moshi-kotlin:$moshi_version")
-//    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
+
+    implementation( "com.squareup.retrofit2:converter-scalars:$retrofit_version")
+    implementation( "com.squareup.retrofit2:retrofit:$retrofit_version")
 }
 
 //kapt {
