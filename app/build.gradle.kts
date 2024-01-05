@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -74,21 +72,28 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     val koinVersion = "3.5.3"
-    implementation ("io.insert-koin:koin-android:$koinVersion")
-    implementation ("io.insert-koin:koin-androidx-compose:$koinVersion")
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
     testImplementation("io.insert-koin:koin-test-junit4:$koinVersion")
 
     val retrofit_version = "2.9.0"
-   val moshi_converter_version = "2.9.0"
-   val moshi_version = "1.14.0"
+    val moshi_converter_version = "2.9.0"
+    val moshi_version = "1.14.0"
+    val room_version = "2.5.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
 
     implementation("com.squareup.retrofit2:converter-moshi:$moshi_converter_version")
-    implementation ("com.squareup.moshi:moshi-kotlin:$moshi_version")
+    implementation("com.squareup.moshi:moshi-kotlin:$moshi_version")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
 
-    implementation( "com.squareup.retrofit2:converter-scalars:$retrofit_version")
-    implementation( "com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-scalars:$retrofit_version")
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-paging:$room_version")
 }
 
 //kapt {

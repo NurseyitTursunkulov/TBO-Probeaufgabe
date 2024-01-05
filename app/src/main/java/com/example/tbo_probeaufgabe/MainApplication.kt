@@ -1,7 +1,10 @@
 package com.example.tbo_probeaufgabe
 
 import android.app.Application
-import com.example.tbo_probeaufgabe.data.Api
+import androidx.room.Room
+import com.example.tbo_probeaufgabe.data.local.Dao
+import com.example.tbo_probeaufgabe.data.local.Database
+import com.example.tbo_probeaufgabe.data.remote.Api
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -30,8 +33,16 @@ class MainApplication : Application(){
     }
 }
 val appModule = module {
-    viewModel { MainViewModel(get()) }
+    viewModel { MainViewModel(api = get(), dao = get()) }
     single { createApiService() }
+    single {
+      Room.databaseBuilder(
+                androidContext(),
+                Database::class.java,
+                Database.DATABASE_NAME
+            ).build()
+    }
+    single <Dao>{ get<Database>().getDao() }
 }
 private fun createApiService(): Api {
     return Retrofit.Builder()
@@ -43,19 +54,5 @@ private fun createApiService(): Api {
         .create(Api::class.java)
 }
 
-class RateLimitInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val response = chain.proceed(request)
 
-        if (response.code() == 429) {
-            // Handle rate-limiting logic here
-            // You might want to wait for a certain amount of time and retry the request
-            // Example: Retry after waiting for 5 seconds
-            Thread.sleep(5000)
-            return chain.proceed(request)
-        }
 
-        return response
-    }
-}

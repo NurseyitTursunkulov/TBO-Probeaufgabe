@@ -1,15 +1,19 @@
-package com.example.tbo_probeaufgabe.data.model
+package com.example.tbo_probeaufgabe.data.remote.model
 
 
 /**
  * Created by nurseiit.tursunkulov on 03.01.2024
  * Coin
  */
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
+@Entity(tableName = "coin_data")
 data class CoinApiModel(
+    @PrimaryKey
     val id: String,
     val symbol: String,
     val name: String,
@@ -52,7 +56,6 @@ data class CoinApiModel(
     val atlChangePercentage: Double,
     @Json(name = "atl_date")
     val atlDate: String,
-    val roi: Any?, // Adjust the type based on the actual type in the response
     @Json(name = "last_updated")
     val lastUpdated: String
 )

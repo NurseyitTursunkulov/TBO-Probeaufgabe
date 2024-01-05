@@ -164,6 +164,8 @@ mono_crash.*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+misc.xml
+gradle.xml
 
 # .NET Scaffolding
 ScaffoldingAssemblies/
