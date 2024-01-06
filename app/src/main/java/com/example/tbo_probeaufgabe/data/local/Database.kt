@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
-import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -19,7 +18,7 @@ abstract class Database : RoomDatabase() {
         const val DATABASE_NAME = "coin_database"
     }
 
-    abstract fun getDao(): Dao
+    abstract fun getDao(): LocalDataSource
 }
 
 class ListListStringConverter {

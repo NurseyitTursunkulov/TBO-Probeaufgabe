@@ -7,6 +7,7 @@ package com.example.tbo_probeaufgabe.data.remote.model
  */
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.tbo_probeaufgabe.domain.model.Coin
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -58,4 +59,17 @@ data class CoinApiModel(
     val atlDate: String,
     @Json(name = "last_updated")
     val lastUpdated: String
-)
+){
+    fun toDomainModel():Coin{
+        return Coin(
+            id = this.id,
+                    symbol = this.symbol,
+                    name = this.name,
+                    image = this.image,
+                    currentPrice = this.currentPrice,
+                    priceChange24h = this.priceChange24h,
+                    priceChangePercentage24h = this.priceChangePercentage24h,
+                    lastUpdated = this.lastUpdated,
+        )
+    }
+}

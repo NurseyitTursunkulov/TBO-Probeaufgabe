@@ -2,13 +2,10 @@ package com.example.tbo_probeaufgabe
 
 import android.app.Application
 import androidx.room.Room
-import com.example.tbo_probeaufgabe.data.local.Dao
+import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.local.Database
-import com.example.tbo_probeaufgabe.data.remote.Api
-import com.squareup.moshi.Moshi
-import okhttp3.Interceptor
+import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -34,7 +31,7 @@ class MainApplication : Application(){
     }
 }
 val appModule = module {
-    viewModel { MainViewModel(api = get(), dao = get()) }
+    viewModel { MainViewModel(api = get(), localDataSource = get()) }
     single { createApiService() }
     single {
       Room.databaseBuilder(
@@ -44,16 +41,16 @@ val appModule = module {
             )
           .fallbackToDestructiveMigration().build()
     }
-    single <Dao>{ get<Database>().getDao() }
+    single <LocalDataSource>{ get<Database>().getDao() }
 }
-private fun createApiService(): Api {
+private fun createApiService(): RemoteDataSource {
     return Retrofit.Builder()
-        .baseUrl(Api.BASE_URL)
+        .baseUrl(RemoteDataSource.BASE_URL)
         .client(OkHttpClient.Builder()
             .build())
         .addConverterFactory(MoshiConverterFactory.create())
         .build()
-        .create(Api::class.java)
+        .create(RemoteDataSource::class.java)
 }
 
 

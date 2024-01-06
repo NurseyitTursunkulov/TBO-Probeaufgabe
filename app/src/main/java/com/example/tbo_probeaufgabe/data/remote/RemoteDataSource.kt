@@ -14,7 +14,7 @@ import retrofit2.http.Query
  * Created by nurseiit.tursunkulov on 03.01.2024
  * Api
  */
-interface Api {
+interface RemoteDataSource {
     companion object {
         const val BASE_URL = "https://api.coingecko.com/api/v3/coins/"
     }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
  * Dao
  */
 @Dao
-abstract class Dao {
+abstract class LocalDataSource {
     @Transaction
     @Query("SELECT * FROM coin_data")
     abstract fun getCoins(): Flow<List<CoinApiModel>>

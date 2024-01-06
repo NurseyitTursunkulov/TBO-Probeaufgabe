@@ -3,8 +3,8 @@ package com.example.tbo_probeaufgabe
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tbo_probeaufgabe.data.local.Dao
-import com.example.tbo_probeaufgabe.data.remote.Api
+import com.example.tbo_probeaufgabe.data.local.LocalDataSource
+import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.fetchResponse
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
@@ -23,17 +23,17 @@ import retrofit2.HttpException
  * MainViewModel
  */
 class MainViewModel(
-    val api: Api,
-    val dao: Dao
+    val api: RemoteDataSource,
+    val localDataSource: LocalDataSource
 ) : ViewModel() {
     init {
         Log.d("nurs", "init")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                dao.getCoins().distinctUntilChanged().collect {
+                localDataSource.getCoins().distinctUntilChanged().collect {
                     it.forEach {
                         Log.d("hadi", "it ${it}")
-                        dao.getCoinHistory(it.id).collect{
+                        localDataSource.getCoinHistory(it.id).collect{
                             Log.d("coinHistory", "getCoinHistoryfrom DATABASE ${it.id} ${it.prices.first()}")
                         }
                     }
@@ -48,12 +48,12 @@ class MainViewModel(
                 val res = fetchResponse(api::getCoins)
                 when (res) {
                     is NetworkResponse.Success -> {
-                        dao.insertCoins(res.body)
+                        localDataSource.insertCoins(res.body)
                         res.body.forEach {
                             Log.d("nurs", "${it.name}")
                             getHistory(it)?.let { it1 -> //todo rename it clean
                                 val coinHistory = it1.toLocalModel(it.id)
-                                dao.insertCoinHistory(coinHistory)
+                                localDataSource.insertCoinHistory(coinHistory)
                             }
                         }
                     }
