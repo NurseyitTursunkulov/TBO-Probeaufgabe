@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.tbo_probeaufgabe.data.local.Dao
 import com.example.tbo_probeaufgabe.data.remote.Api
 import com.example.tbo_probeaufgabe.data.remote.fetchResponse
+import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 
 /**
@@ -44,22 +46,7 @@ fun getFromApi() {
                     dao.insertCoins(res.body)
                     res.body.forEach {
                         Log.d("nurs", "${it.name}")
-                        val res2 = fetchResponse({ api.getCoinHistory(it.id) })
-                        when (res2) {
-                            is NetworkResponse.Success -> {
-                                Log.d("nurs", "resBody ${(res2.body)}")
-                            }
-
-                            is NetworkResponse.UnknownException -> {
-                                Log.d("nurs", "${res2.exception}")
-                                (res2.exception as? retrofit2.HttpException)?.let {
-                                    if (it.code() == 429) {
-                                        delay(10000)
-                                        Log.d("nurs", "after delay 300")
-                                    }
-                                }
-                            }
-                        }
+                        getHistory(it)
                     }
                 }
 
@@ -71,7 +58,26 @@ fun getFromApi() {
     }
 }
 
-override fun onCleared() {
+    private suspend fun getHistory(it: CoinApiModel) {
+        val res2 = fetchResponse({ api.getCoinHistory(it.id) })
+        when (res2) {
+            is NetworkResponse.Success -> {
+                Log.d("nurs", "resBody ${(res2.body)}")
+            }
+
+            is NetworkResponse.UnknownException -> {
+                Log.d("nurs", "${res2.exception}")
+                (res2.exception as? HttpException)?.let {
+                    if (it.code() == 429) {
+                        delay(10000)
+                        Log.d("nurs", "after delay 300")
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
     super.onCleared()
     Log.d("nurs", "onCleared")
     viewModelScope.coroutineContext.cancel()
