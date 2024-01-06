@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.tbo_probeaufgabe.data.local.Dao
 import com.example.tbo_probeaufgabe.data.local.Database
 import com.example.tbo_probeaufgabe.data.remote.Api
+import com.squareup.moshi.Moshi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -40,7 +41,8 @@ val appModule = module {
                 androidContext(),
                 Database::class.java,
                 Database.DATABASE_NAME
-            ).build()
+            )
+          .fallbackToDestructiveMigration().build()
     }
     single <Dao>{ get<Database>().getDao() }
 }
