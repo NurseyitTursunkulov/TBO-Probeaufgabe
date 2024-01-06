@@ -26,6 +26,9 @@ abstract class LocalDataSource {
     abstract suspend fun insertCoinHistory(coinHistory: CoinHistoryLocalModel)
 
     @Query("SELECT * FROM coin_history WHERE id = :id")
-    abstract fun getCoinHistory(id: String): Flow<CoinHistoryLocalModel>
+    abstract fun getCoinHistoryFlow(id: String): Flow<CoinHistoryLocalModel>
+
+    @Query("SELECT * FROM coin_history WHERE id = :id")
+    abstract fun getCoinHistory(id: String): CoinHistoryLocalModel?
 
 }

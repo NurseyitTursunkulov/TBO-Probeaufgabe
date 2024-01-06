@@ -3,6 +3,7 @@ package com.example.tbo_probeaufgabe.data.remote.model
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.tbo_probeaufgabe.domain.model.CoinHistoryPrice
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -23,4 +24,13 @@ data class CoinHistoryLocalModel(
     val marketCaps: List<List<String>>,
     @Json(name = "total_volumes")
     val totalVolumes: List<List<String>>
-)
+){
+    companion object{
+        fun toDomainModel(coinHistoryLocalModel: CoinHistoryLocalModel): CoinHistoryPrice {
+            return CoinHistoryPrice(
+                id = coinHistoryLocalModel.id,
+                prices = coinHistoryLocalModel.prices
+            )
+        }
+    }
+}

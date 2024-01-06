@@ -2,6 +2,8 @@ package com.example.tbo_probeaufgabe
 
 import android.app.Application
 import androidx.room.Room
+import com.example.tbo_probeaufgabe.data.RepoImpl
+import com.example.tbo_probeaufgabe.data.Repository
 import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.local.Database
 import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
@@ -31,7 +33,7 @@ class MainApplication : Application(){
     }
 }
 val appModule = module {
-    viewModel { MainViewModel(api = get(), localDataSource = get()) }
+    viewModel { MainViewModel(api = get(), localDataSource = get(), repository = get()) }
     single { createApiService() }
     single {
       Room.databaseBuilder(
@@ -42,6 +44,7 @@ val appModule = module {
           .fallbackToDestructiveMigration().build()
     }
     single <LocalDataSource>{ get<Database>().getDao() }
+    single<Repository>{RepoImpl(localDataSource = get(), remoteDataSource = get())}
 }
 private fun createApiService(): RemoteDataSource {
     return Retrofit.Builder()

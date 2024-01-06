@@ -3,6 +3,7 @@ package com.example.tbo_probeaufgabe
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tbo_probeaufgabe.data.Repository
 import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.fetchResponse
@@ -24,18 +25,17 @@ import retrofit2.HttpException
  */
 class MainViewModel(
     val api: RemoteDataSource,
-    val localDataSource: LocalDataSource
+    val localDataSource: LocalDataSource,
+    val repository: Repository
 ) : ViewModel() {
     init {
         Log.d("nurs", "init")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                localDataSource.getCoins().distinctUntilChanged().collect {
+                repository.getCoins().distinctUntilChanged().collect {
                     it.forEach {
-                        Log.d("hadi", "it ${it}")
-                        localDataSource.getCoinHistory(it.id).collect{
-                            Log.d("coinHistory", "getCoinHistoryfrom DATABASE ${it.id} ${it.prices.first()}")
-                        }
+                        Log.d("repo", "it ${it}")
+//                        Log.d("coinHistory", "getCoinHistoryfrom DATABASE ${it.historyPrice?.id} ${it.historyPrice?.prices?.first()}")
                     }
                 }
             }

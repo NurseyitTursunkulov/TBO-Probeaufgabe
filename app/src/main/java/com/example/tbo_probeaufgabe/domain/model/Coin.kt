@@ -12,5 +12,6 @@ data class Coin(
     val currentPrice: Double,
     val priceChange24h: Double,
     val priceChangePercentage24h: Double,
-    val lastUpdated: String
+    val lastUpdated: String,
+    var historyPrice: CoinHistoryPrice? = null
 )
