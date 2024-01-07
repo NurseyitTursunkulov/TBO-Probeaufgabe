@@ -4,14 +4,11 @@ import android.app.Application
 import androidx.room.Room
 import com.example.tbo_probeaufgabe.data.RepoImpl
 import com.example.tbo_probeaufgabe.data.Repository
-import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.local.db.Dao
 import com.example.tbo_probeaufgabe.data.local.db.Database
-import com.example.tbo_probeaufgabe.data.local.test.LocalDataSourceTest
+import com.example.tbo_probeaufgabe.data.local.test.LocalDataSourceFake
 import com.example.tbo_probeaufgabe.data.remote.Api
-import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
-import com.example.tbo_probeaufgabe.data.remote.RemoteDataSourceImpl
-import com.example.tbo_probeaufgabe.data.remote.RemoteDataSourceTest
+import com.example.tbo_probeaufgabe.data.remote.RemoteDataSourceFake
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -51,7 +48,7 @@ val appModule = module {
     single <Dao>{ get<Database>().getDao() }
 //    single <LocalDataSource>{ LocalDataSourceTest() }
 //    single <RemoteDataSource>{ RemoteDataSourceTest() }
-    single<Repository>{RepoImpl(localDataSource = LocalDataSourceTest(), remoteDataSource = RemoteDataSourceTest())}
+    single<Repository>{RepoImpl(localDataSource = LocalDataSourceFake(), remoteDataSource = RemoteDataSourceFake())}
 }
 private fun createApiService(): Api {
     return Retrofit.Builder()

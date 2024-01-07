@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
  * Created by nurseiit.tursunkulov on 06.01.2024
  * RemoteDataSourceTest
  */
-class RemoteDataSourceTest: RemoteDataSource {
+class RemoteDataSourceFake: RemoteDataSource {
     override suspend fun getCoins(): List<CoinApiModel> {
         Log.i("nurs", "RemoteDataSource getCoins from remote ${coinList.first().name}")
         delay(2000)

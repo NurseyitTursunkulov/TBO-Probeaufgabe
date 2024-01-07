@@ -5,17 +5,14 @@ import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flowOf
 
 
 /**
  * Created by nurseiit.tursunkulov on 06.01.2024
  * LocalDataSourceTest
  */
-class LocalDataSourceTest: LocalDataSource {
+class LocalDataSourceFake: LocalDataSource {
 
     private val coinFlowInternal = MutableStateFlow<List<CoinApiModel>>(listOf())
 
