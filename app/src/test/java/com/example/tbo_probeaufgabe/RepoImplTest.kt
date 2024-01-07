@@ -10,6 +10,7 @@ import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
 import com.example.tbo_probeaufgabe.domain.model.Coin
+import com.example.tbo_probeaufgabe.util.ErrorType
 import com.example.tbo_probeaufgabe.util.Result
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import io.mockk.coEvery
@@ -121,6 +122,8 @@ class RepoImplTest {
         coVerify { localDataSourceFake.getCoins() }
         coVerify { remoteDataSourceFake.getCoins() }
         coVerify(exactly = 0) { localDataSourceFake.insertCoins(coinList) }
-        assertEquals(listOf<List<Coin>>(), values[0]) // Assert on the list contents
+        coVerify(exactly = 0) { remoteDataSourceFake.getCoinHistory(any()) }
+        coVerify(exactly = 0) { localDataSourceFake.insertCoinHistory(any()) }
+        assertEquals(Result.Error(ErrorType.UnknownError), values[0]) // Assert on the list contents
     }
 }

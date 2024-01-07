@@ -6,6 +6,7 @@ import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.fetchResponse
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel.Companion.toDomainModel
 import com.example.tbo_probeaufgabe.domain.model.Coin
+import com.example.tbo_probeaufgabe.util.ErrorType
 import com.example.tbo_probeaufgabe.util.Result
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +50,7 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
                                     )
                                 }
                                 else -> {
+                                    emit(Result.Error(ErrorType.UnknownException("${coinApiModel.id } was not able to fetch details data")))
                                     Log.d("nurs", "${coinHistoryResponse.toString()}")//todo handle error case
                                 }
                             }
@@ -57,7 +59,7 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
                 }
 
                 else -> {
-                    Log.d("nurs", "${response.toString()}")
+                   emit(Result.Error(ErrorType.UnknownError))
                 }
             }
         }
