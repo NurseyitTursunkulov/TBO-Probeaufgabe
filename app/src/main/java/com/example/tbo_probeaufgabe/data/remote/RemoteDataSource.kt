@@ -2,6 +2,7 @@ package com.example.tbo_probeaufgabe.data.remote
 
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
+import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 
 
 /**
@@ -9,7 +10,7 @@ import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
  * RemoteDataSource
  */
 interface RemoteDataSource {
-    suspend fun getCoins(): List<CoinApiModel>
+    suspend fun getCoins(): NetworkResponse<List<CoinApiModel>>
 
-    suspend fun getCoinHistory(id: String): CoinHistoryApiModel
+    suspend fun getCoinHistory(id: String): NetworkResponse<CoinHistoryApiModel>
 }

@@ -23,5 +23,5 @@ interface LocalDataSource {
 
    suspend fun getCoinHistoryFlow(id: String): Flow<CoinHistoryLocalModel>
 
-   suspend fun getCoinHistory(id: String): CoinHistoryLocalModel?
+   suspend fun getCoinHistory(id: String): CoinHistoryLocalModel?// todo add try catch in case of error
 }

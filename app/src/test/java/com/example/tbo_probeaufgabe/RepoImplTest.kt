@@ -10,6 +10,7 @@ import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
 import com.example.tbo_probeaufgabe.domain.model.Coin
+import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -47,14 +48,60 @@ class RepoImplTest {
 
         val remoteDataSourceFake = mockk<RemoteDataSource>()
         val localDataSourceFake = mockk<LocalDataSource>()
-        coEvery { remoteDataSourceFake.getCoins() } returns coinList
+        coEvery { remoteDataSourceFake.getCoins() } returns  NetworkResponse.Success(coinList)
         coEvery { localDataSourceFake.getCoins() } returns coinFlow
         coEvery { localDataSourceFake.insertCoins(coinList) } coAnswers {coinFlowInternal.emit(coinList) }
         coEvery { localDataSourceFake.insertCoinHistory(any()) } coAnswers { coinHistory.add(firstArg()) }
         coEvery { localDataSourceFake.getCoinHistory(any()) } coAnswers { coinHistory.find { it.id == firstArg() } }
         coEvery { remoteDataSourceFake.getCoinHistory(any()) } coAnswers {
-            coinHistoryList.find { it.id == firstArg() }
-                ?.let { CoinHistoryLocalModel.toApiModel(it) }!!
+            NetworkResponse.Success(coinHistoryList.find { it.id == firstArg() }
+                ?.let { CoinHistoryLocalModel.toApiModel(it) }!!)
+        }
+        val repository = RepoImpl(localDataSourceFake, remoteDataSourceFake)
+
+        val values = mutableListOf<List<Coin>>()
+        /** when
+         * ---------------------------------------------------*/
+
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            repository.getCoins().toList(values)
+        }
+
+        /** then
+         * ---------------------------------------------------*/
+
+        coVerify { localDataSourceFake.getCoins() }
+        coVerify { remoteDataSourceFake.getCoins() }
+        coVerify { localDataSourceFake.insertCoins(coinList) }
+        assertEquals(coinList.map { it.toDomainModel() }, values[0]) // Assert on the list contents
+        coinList.forEach {
+            coVerify { remoteDataSourceFake.getCoinHistory(it.id) }
+            coinHistoryList.find { coinHistoryLocalModel -> coinHistoryLocalModel.id == it.id }?.let { coinHistoryLocalModel ->
+                coVerify { localDataSourceFake.insertCoinHistory(coinHistoryLocalModel) }
+            }
+        }
+
+        assertEquals(coinsWithHistory, values[1])
+    }
+
+    @Test
+    fun first_lauch_case_test_repository_and_getCoins_returns_error() = runTest {
+        /** given
+         * ---------------------------------------------------*/
+        val coinFlowInternal = MutableStateFlow<List<CoinApiModel>>(listOf())
+        val coinFlow: Flow<List<CoinApiModel>> = coinFlowInternal
+        val coinHistory: MutableList<CoinHistoryLocalModel> = mutableListOf()
+
+        val remoteDataSourceFake = mockk<RemoteDataSource>()
+        val localDataSourceFake = mockk<LocalDataSource>()
+        coEvery { remoteDataSourceFake.getCoins() } returns NetworkResponse.Success(coinList)
+        coEvery { localDataSourceFake.getCoins() } returns coinFlow
+        coEvery { localDataSourceFake.insertCoins(coinList) } coAnswers {coinFlowInternal.emit(coinList) }
+        coEvery { localDataSourceFake.insertCoinHistory(any()) } coAnswers { coinHistory.add(firstArg()) }
+        coEvery { localDataSourceFake.getCoinHistory(any()) } coAnswers { coinHistory.find { it.id == firstArg() } }
+        coEvery { remoteDataSourceFake.getCoinHistory(any()) } coAnswers {
+            NetworkResponse.Success(coinHistoryList.find { it.id == firstArg() }
+                ?.let { CoinHistoryLocalModel.toApiModel(it) }!!)
         }
         val repository = RepoImpl(localDataSourceFake, remoteDataSourceFake)
 

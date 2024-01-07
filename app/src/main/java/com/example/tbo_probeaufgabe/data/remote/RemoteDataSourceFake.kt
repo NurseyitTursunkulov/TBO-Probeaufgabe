@@ -6,6 +6,7 @@ import com.example.tbo_probeaufgabe.data.local.test.coinList
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel.Companion.toApiModel
+import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import kotlinx.coroutines.delay
 
 
@@ -14,15 +15,15 @@ import kotlinx.coroutines.delay
  * RemoteDataSourceTest
  */
 class RemoteDataSourceFake: RemoteDataSource {
-    override suspend fun getCoins(): List<CoinApiModel> {
+    override suspend fun getCoins(): NetworkResponse<List<CoinApiModel>> {
         Log.i("nurs", "RemoteDataSource getCoins from remote ${coinList.first().name}")
         delay(2000)
-        return coinList
+        return NetworkResponse.Success(coinList)
     }
 
-    override suspend fun getCoinHistory(id: String): CoinHistoryApiModel {
+    override suspend fun getCoinHistory(id: String): NetworkResponse<CoinHistoryApiModel> {
         Log.i("nurs", "RemoteDataSource getCoinHistory from remote ${id}")
         delay(2000)
-        return coinHistoryList.find { it.id == id }?.let { toApiModel(it) }!!
+        return NetworkResponse.Success(coinHistoryList.find { it.id == id }?.let { toApiModel(it) }!!)
     }
 }

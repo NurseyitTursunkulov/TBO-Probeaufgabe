@@ -45,7 +45,7 @@ suspend fun <A> fetchResponse(
         if (e.code() == 429) {// todo test
             delay(1000)
             Log.d("nurs", "after delay ")
-            return fetchResponse(networkFunction)
+            return fetchResponse(networkFunction)//todo add max retry
         }else {
             return NetworkResponse.UnknownException(e)
         }
