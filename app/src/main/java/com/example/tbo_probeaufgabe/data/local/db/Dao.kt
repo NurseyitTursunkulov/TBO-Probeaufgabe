@@ -31,4 +31,8 @@ abstract class Dao {
     @Query("SELECT * FROM coin_history WHERE id = :id")
     abstract fun getCoinHistory(id: String): CoinHistoryLocalModel?
 
+    @Query("DELETE FROM coin_data")
+    abstract fun clearCoin()
+    @Query("DELETE FROM coin_history")
+    abstract fun clearHistory()
 }

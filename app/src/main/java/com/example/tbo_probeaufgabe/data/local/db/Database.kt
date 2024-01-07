@@ -10,7 +10,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 
-@Database(entities = [CoinApiModel::class, CoinHistoryLocalModel::class], version = 3)
+@Database(entities = [CoinApiModel::class, CoinHistoryLocalModel::class], version = 4)
 @TypeConverters(ListListStringConverter::class)
 abstract class Database : RoomDatabase() {
 

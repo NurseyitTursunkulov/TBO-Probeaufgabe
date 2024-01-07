@@ -45,7 +45,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: MainViewMod
     Text(
         text = "Hello $name!",
         modifier = modifier.clickable {
-        viewModel.getFromApi()
+        viewModel.clearDb()
         }
     )
 }

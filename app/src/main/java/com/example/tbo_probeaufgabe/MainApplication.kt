@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.example.tbo_probeaufgabe.data.RepoImpl
 import com.example.tbo_probeaufgabe.data.Repository
+import com.example.tbo_probeaufgabe.data.local.LocalDataSource
+import com.example.tbo_probeaufgabe.data.local.LocalDataSourceImpl
 import com.example.tbo_probeaufgabe.data.local.db.Dao
 import com.example.tbo_probeaufgabe.data.local.db.Database
 import com.example.tbo_probeaufgabe.data.local.test.LocalDataSourceFake
@@ -34,7 +36,7 @@ class MainApplication : Application(){
         }
     }
 }
-val appModule = module {
+val appModule = module {//todo remove to modules class
     viewModel { MainViewModel(api = get(), dao = get(), repository = get()) }
     single { createApiService() }
     single {
@@ -48,7 +50,7 @@ val appModule = module {
     single <Dao>{ get<Database>().getDao() }
 //    single <LocalDataSource>{ LocalDataSourceTest() }
 //    single <RemoteDataSource>{ RemoteDataSourceTest() }
-    single<Repository>{RepoImpl(localDataSource = LocalDataSourceFake(), remoteDataSource = RemoteDataSourceFake())}
+    single<Repository>{RepoImpl(localDataSource = LocalDataSourceImpl(get()), remoteDataSource = RemoteDataSourceFake())}
 }
 private fun createApiService(): Api {
     return Retrofit.Builder()

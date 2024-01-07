@@ -41,6 +41,14 @@ class MainViewModel(
         }
     }
 
+    fun clearDb() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                dao.clearCoin()
+                dao.clearHistory()
+            }
+        }
+    }
     fun getFromApi() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -64,6 +72,7 @@ class MainViewModel(
             }
         }
     }
+
 
     private suspend fun getHistory(it: CoinApiModel) : CoinHistoryApiModel? {
         val res2 = fetchResponse { api.getCoinHistory(it.id) }

@@ -9,7 +9,7 @@ import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
  * MockData
  */
 
-
+//todo move to test package
 val coinList = listOf(
     CoinApiModel(
         "bitcoin",

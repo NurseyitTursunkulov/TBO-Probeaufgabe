@@ -2,15 +2,13 @@ package com.example.tbo_probeaufgabe.data.local.test
 
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
 
-/**
- * Created by nurseiit.tursunkulov on 06.01.24.
- */
-
 
 /**
  * Created by nurseiit.tursunkulov on 06.01.2024
  * MockDataCoinHistoryList
  */
+//todo move to test package
+
 val coinHistoryList = listOf(
     CoinHistoryLocalModel(
         id = "bitcoin",

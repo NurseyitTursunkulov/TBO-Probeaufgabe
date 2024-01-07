@@ -5,14 +5,10 @@ import com.example.tbo_probeaufgabe.domain.model.Coin
 import com.example.tbo_probeaufgabe.domain.model.CoinHistoryPrice
 
 /**
- * Created by nurseiit.tursunkulov on 07.01.24.
- */
-
-
-/**
  * Created by nurseiit.tursunkulov on 07.01.2024
  * CoinListWithHistory
  */
+//todo move to test package
 val coinsWithHistory = listOf(
     Coin(
         id = "bitcoin",
