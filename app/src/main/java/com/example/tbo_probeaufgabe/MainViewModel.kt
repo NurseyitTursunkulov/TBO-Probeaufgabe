@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.tbo_probeaufgabe.data.Repository
 import com.example.tbo_probeaufgabe.data.local.db.Dao
 import com.example.tbo_probeaufgabe.data.remote.Api
+import com.example.tbo_probeaufgabe.domain.model.Coin
+import com.example.tbo_probeaufgabe.domain.model.CoinHistoryPrice
+import com.example.tbo_probeaufgabe.ui.screens.CoinListState
 import com.example.tbo_probeaufgabe.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -24,7 +27,13 @@ class MainViewModel(
     val repository: Repository
 ) : ViewModel() {
 
-    val state = MutableStateFlow<CoinListState>(CoinListState())
+    val state = MutableStateFlow<CoinListState>(CoinListState())//todo make private set, public get
+    var selectedCoin =MutableStateFlow<CoinHistoryPrice>(CoinHistoryPrice("", listOf()))
+    fun setSelCoin(coin: Coin) {
+         coin.historyPrice?.let {
+             selectedCoin.value = it
+        }
+    }
 
     init {
         Log.d("nurs", "init")
@@ -32,12 +41,12 @@ class MainViewModel(
             withContext(Dispatchers.IO) {
                 repository.getCoins().collect {
                     when (it) {
-                        is Result.Error -> {
-
+                        is Result.Error -> { //todo show error
                         }
-                        Result.Loading -> {
 
+                        Result.Loading -> { //todo show loading,
                         }
+
                         is Result.Success -> {
                             state.value = CoinListState(
                                 isLoading = false,

@@ -15,6 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tbo_probeaufgabe.ui.screens.CoinDetailScreen
+import com.example.tbo_probeaufgabe.ui.screens.CoinListScreen
+import com.example.tbo_probeaufgabe.ui.screens.Screen
 import com.example.tbo_probeaufgabe.ui.theme.TBO_ProbeaufgabeTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,11 +44,11 @@ class MainActivity : ComponentActivity() {
                         ) {
                             CoinListScreen(navController)
                         }
-//                        composable(
-//                            route = Screen.CoinDetailScreen.route + "/{coinId}"
-//                        ) {
-//                            CoinDetailScreen()
-//                        }
+                        composable(
+                            route = Screen.CoinDetailScreen.route + "/{coinId}"
+                        ) {
+                            CoinDetailScreen()
+                        }
                     }
                 }
             }

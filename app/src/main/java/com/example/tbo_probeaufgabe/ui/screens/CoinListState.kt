@@ -1,4 +1,4 @@
-package com.example.tbo_probeaufgabe
+package com.example.tbo_probeaufgabe.ui.screens
 
 import com.example.tbo_probeaufgabe.domain.model.Coin
 
