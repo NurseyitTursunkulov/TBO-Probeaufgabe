@@ -32,7 +32,7 @@ class MainViewModel(
         Log.d("nurs", "init")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getCoins().distinctUntilChanged().collect {
+                repository.getCoins().collect {
                         Log.e("nurs", "MainViewmodel it ${it}")
                     it.forEach {
 //                        Log.d("coinHistory", "getCoinHistoryfrom DATABASE ${it.historyPrice?.id} ${it.historyPrice?.prices?.first()}")

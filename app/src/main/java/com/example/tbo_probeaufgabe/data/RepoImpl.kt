@@ -9,6 +9,7 @@ import com.example.tbo_probeaufgabe.domain.model.Coin
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.map
  */
 class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) :
     Repository {
-    override suspend fun getCoins(): Flow<List<Coin>> {
+    override suspend fun getCoins(): Flow<List<Coin>> = flow{
         val coinsFromCahs = localDataSource.getCoins()
             .map { coinApiModelList ->
                 coinApiModelList.map { coinApiModelList ->
@@ -35,6 +36,7 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
             when (res) {
                 is NetworkResponse.Success -> {
                     localDataSource.insertCoins(res.body)
+                    emit(res.body.map { it.toDomainModel() })
                     res.body.map { coinApiModel ->
                         coinApiModel.apply {
                             remoteDataSource.getCoinHistory(coinApiModel.id)
@@ -53,8 +55,10 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
                 }
             }
         }
+        coinsFromCahs.collect {
+            emit(it)
+        }
         Log.d("nurs", "RepoImpl 53 getCoins from repo ${coinsFromCahs.firstOrNull()}")
-        return coinsFromCahs
     }
 }
 
