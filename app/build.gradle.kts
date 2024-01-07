@@ -115,6 +115,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.7")
 //    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.13.7")
     testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    implementation ("androidx.navigation:navigation-compose:2.7.6")
 }
 
 //kapt {

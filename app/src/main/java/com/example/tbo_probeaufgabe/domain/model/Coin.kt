@@ -12,6 +12,6 @@ data class Coin(
     val currentPrice: Double,
     val priceChange24h: Double,
     val priceChangePercentage24h: Double,
-    val lastUpdated: String,
+    val lastUpdated: String,//todo use local time, so that user will not confused
     var historyPrice: CoinHistoryPrice? = null
 )

@@ -6,18 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.tbo_probeaufgabe.data.Repository
 import com.example.tbo_probeaufgabe.data.local.db.Dao
 import com.example.tbo_probeaufgabe.data.remote.Api
-import com.example.tbo_probeaufgabe.data.remote.fetchResponse
-import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
-import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
-import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
-import com.example.tbo_probeaufgabe.util.succeeded
+import com.example.tbo_probeaufgabe.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 
 
 /**
@@ -29,12 +23,29 @@ class MainViewModel(
     val dao: Dao,
     val repository: Repository
 ) : ViewModel() {
+
+    val state = MutableStateFlow<CoinListState>(CoinListState())
+
     init {
         Log.d("nurs", "init")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getCoins().collect {
-                        Log.e("nurs", "MainViewmodel it ${it}")
+                    when (it) {
+                        is Result.Error -> {
+
+                        }
+                        Result.Loading -> {
+
+                        }
+                        is Result.Success -> {
+                            state.value = CoinListState(
+                                isLoading = false,
+                                coins = it.data.sortedBy { it.name }//todo make customizble sort
+                            )
+                        }
+                    }
+                    Log.e("nurs", "MainViewmodel it ${it}")
 
                 }
             }
