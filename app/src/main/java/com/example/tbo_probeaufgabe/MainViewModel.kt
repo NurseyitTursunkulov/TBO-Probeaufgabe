@@ -3,9 +3,9 @@ package com.example.tbo_probeaufgabe
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tbo_probeaufgabe.data.Repository
 import com.example.tbo_probeaufgabe.data.local.db.Dao
 import com.example.tbo_probeaufgabe.data.remote.Api
+import com.example.tbo_probeaufgabe.domain.GetCoinsUseCase
 import com.example.tbo_probeaufgabe.domain.model.Coin
 import com.example.tbo_probeaufgabe.domain.model.CoinHistoryPrice
 import com.example.tbo_probeaufgabe.ui.screens.CoinListState
@@ -24,22 +24,16 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     val api: Api,
     val dao: Dao,
-    val repository: Repository
+    val coinsUseCase: GetCoinsUseCase
 ) : ViewModel() {
 
     val state = MutableStateFlow<CoinListState>(CoinListState())//todo make private set, public get
     var selectedCoin =MutableStateFlow<CoinHistoryPrice>(CoinHistoryPrice("", listOf()))
-    fun setSelCoin(coin: Coin) {
-         coin.historyPrice?.let {
-             selectedCoin.value = it
-        }
-    }
 
     init {
-        Log.d("nurs", "init")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getCoins().collect {
+                coinsUseCase.invoke().collect {
                     when (it) {
                         is Result.Error -> { //todo show error
                         }
@@ -52,12 +46,26 @@ class MainViewModel(
                                 isLoading = false,
                                 coins = it.data.sortedBy { it.name }//todo make customizble sort
                             )
+                            coinsUseCase.startTorefresh()
                         }
                     }
-                    Log.e("nurs", "MainViewmodel it ${it}")
 
                 }
             }
+        }
+    }
+
+
+
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.coroutineContext.cancel()
+    }
+
+    fun setSelCoin(coin: Coin) {
+        coin.historyPrice?.let {
+            selectedCoin.value = it
         }
     }
 
@@ -68,13 +76,6 @@ class MainViewModel(
                 dao.clearHistory()
             }
         }
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("nurs", "onCleared")
-        viewModelScope.coroutineContext.cancel()
     }
 
 }

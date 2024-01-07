@@ -4,13 +4,12 @@ import android.app.Application
 import androidx.room.Room
 import com.example.tbo_probeaufgabe.data.RepoImpl
 import com.example.tbo_probeaufgabe.data.Repository
-import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.local.LocalDataSourceImpl
 import com.example.tbo_probeaufgabe.data.local.db.Dao
 import com.example.tbo_probeaufgabe.data.local.db.Database
-import com.example.tbo_probeaufgabe.data.local.test.LocalDataSourceFake
 import com.example.tbo_probeaufgabe.data.remote.Api
 import com.example.tbo_probeaufgabe.data.remote.RemoteDataSourceFake
+import com.example.tbo_probeaufgabe.domain.GetCoinsUseCase
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -37,7 +36,8 @@ class MainApplication : Application(){
     }
 }
 val appModule = module {//todo remove to modules class
-    viewModel { MainViewModel(api = get(), dao = get(), repository = get()) }
+    viewModel { MainViewModel(api = get(), dao = get(), coinsUseCase = get()) }
+    single { GetCoinsUseCase(repository = get())    }
     single { createApiService() }
     single {
       Room.databaseBuilder(
