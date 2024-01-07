@@ -1,4 +1,4 @@
-package com.example.tbo_probeaufgabe.data.local
+package com.example.tbo_probeaufgabe.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -18,7 +18,7 @@ abstract class Database : RoomDatabase() {
         const val DATABASE_NAME = "coin_database"
     }
 
-    abstract fun getDao(): LocalDataSource
+    abstract fun getDao(): Dao
 }
 
 class ListListStringConverter {

@@ -5,8 +5,13 @@ import androidx.room.Room
 import com.example.tbo_probeaufgabe.data.RepoImpl
 import com.example.tbo_probeaufgabe.data.Repository
 import com.example.tbo_probeaufgabe.data.local.LocalDataSource
-import com.example.tbo_probeaufgabe.data.local.Database
+import com.example.tbo_probeaufgabe.data.local.db.Dao
+import com.example.tbo_probeaufgabe.data.local.db.Database
+import com.example.tbo_probeaufgabe.data.local.test.LocalDataSourceTest
+import com.example.tbo_probeaufgabe.data.remote.Api
 import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
+import com.example.tbo_probeaufgabe.data.remote.RemoteDataSourceImpl
+import com.example.tbo_probeaufgabe.data.remote.RemoteDataSourceTest
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -33,7 +38,7 @@ class MainApplication : Application(){
     }
 }
 val appModule = module {
-    viewModel { MainViewModel(api = get(), localDataSource = get(), repository = get()) }
+    viewModel { MainViewModel(api = get(), dao = get(), repository = get()) }
     single { createApiService() }
     single {
       Room.databaseBuilder(
@@ -43,17 +48,19 @@ val appModule = module {
             )
           .fallbackToDestructiveMigration().build()
     }
-    single <LocalDataSource>{ get<Database>().getDao() }
-    single<Repository>{RepoImpl(localDataSource = get(), remoteDataSource = get())}
+    single <Dao>{ get<Database>().getDao() }
+//    single <LocalDataSource>{ LocalDataSourceTest() }
+//    single <RemoteDataSource>{ RemoteDataSourceTest() }
+    single<Repository>{RepoImpl(localDataSource = LocalDataSourceTest(), remoteDataSource = RemoteDataSourceTest())}
 }
-private fun createApiService(): RemoteDataSource {
+private fun createApiService(): Api {
     return Retrofit.Builder()
-        .baseUrl(RemoteDataSource.BASE_URL)
+        .baseUrl(Api.BASE_URL)
         .client(OkHttpClient.Builder()
             .build())
         .addConverterFactory(MoshiConverterFactory.create())
         .build()
-        .create(RemoteDataSource::class.java)
+        .create(Api::class.java)
 }
 
 

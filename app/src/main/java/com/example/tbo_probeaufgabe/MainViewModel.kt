@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tbo_probeaufgabe.data.Repository
-import com.example.tbo_probeaufgabe.data.local.LocalDataSource
-import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
+import com.example.tbo_probeaufgabe.data.local.db.Dao
+import com.example.tbo_probeaufgabe.data.remote.Api
 import com.example.tbo_probeaufgabe.data.remote.fetchResponse
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
@@ -24,8 +24,8 @@ import retrofit2.HttpException
  * MainViewModel
  */
 class MainViewModel(
-    val api: RemoteDataSource,
-    val localDataSource: LocalDataSource,
+    val api: Api,
+    val dao: Dao,
     val repository: Repository
 ) : ViewModel() {
     init {
@@ -33,8 +33,8 @@ class MainViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getCoins().distinctUntilChanged().collect {
+                        Log.e("nurs", "MainViewmodel it ${it}")
                     it.forEach {
-                        Log.d("repo", "it ${it}")
 //                        Log.d("coinHistory", "getCoinHistoryfrom DATABASE ${it.historyPrice?.id} ${it.historyPrice?.prices?.first()}")
                     }
                 }
@@ -48,12 +48,12 @@ class MainViewModel(
                 val res = fetchResponse(api::getCoins)
                 when (res) {
                     is NetworkResponse.Success -> {
-                        localDataSource.insertCoins(res.body)
+                        dao.insertCoins(res.body)
                         res.body.forEach {
                             Log.d("nurs", "${it.name}")
                             getHistory(it)?.let { it1 -> //todo rename it clean
                                 val coinHistory = it1.toLocalModel(it.id)
-                                localDataSource.insertCoinHistory(coinHistory)
+                                dao.insertCoinHistory(coinHistory)
                             }
                         }
                     }

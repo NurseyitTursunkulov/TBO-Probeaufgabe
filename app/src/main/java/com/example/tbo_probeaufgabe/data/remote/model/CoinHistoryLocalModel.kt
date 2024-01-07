@@ -32,5 +32,12 @@ data class CoinHistoryLocalModel(
                 prices = coinHistoryLocalModel.prices
             )
         }
+        fun toApiModel(coinHistoryLocalModel: CoinHistoryLocalModel): CoinHistoryApiModel {
+            return CoinHistoryApiModel(
+                prices = coinHistoryLocalModel.prices,
+                marketCaps = coinHistoryLocalModel.marketCaps,
+                totalVolumes = coinHistoryLocalModel.totalVolumes
+            )
+        }
     }
 }
