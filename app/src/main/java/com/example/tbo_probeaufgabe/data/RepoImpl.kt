@@ -69,6 +69,36 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
         }
         Log.d("nurs", "RepoImpl 53 getCoins from repo ${coinsFromCahs.firstOrNull()}")
     }
+
+    override suspend fun refresh(): Result<Unit> {
+        val response = remoteDataSource.getCoins()
+        when (response) {
+            is NetworkResponse.Success -> {
+                val coinList = response.body
+                localDataSource.insertCoins(coinList)
+                coinList.map { coinApiModel ->
+                    coinApiModel.apply {
+                        val coinHistoryResponse = remoteDataSource.getCoinHistory(coinApiModel.id)
+                        when(coinHistoryResponse) {
+                            is NetworkResponse.Success -> {
+                                localDataSource.insertCoinHistory(
+                                    coinHistoryResponse.body.toLocalModel(coinApiModel.id)
+                                )
+                            }
+                            else -> {
+                                return Result.Error(ErrorType.UnknownException("${coinApiModel.id } was not able to fetch details data"))
+                            }
+                        }
+                    }
+                }
+                return Result.Success(Unit)
+            }
+
+            else -> {
+                return Result.Error(ErrorType.UnknownError)
+            }
+        }
+    }
 }
 
 suspend fun <T> Flow<T>.isEmpty(): Boolean {

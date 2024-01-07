@@ -128,4 +128,9 @@ class RepoImplTest {
         assertEquals(Result.Loading, values[0]) // Assert on the list contents
         assertEquals(Result.Error(ErrorType.UnknownError), values[1]) // Assert on the list contents
     }
+
+    @Test
+    fun test_refresh(){
+        //todo write test
+    }
 }
