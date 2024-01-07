@@ -11,4 +11,5 @@ import com.example.tbo_probeaufgabe.util.Result
  */
 interface Repository {
     suspend fun getCoins(): Flow<Result<List<Coin>>>
+
 }

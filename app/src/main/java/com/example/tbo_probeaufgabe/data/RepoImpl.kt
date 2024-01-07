@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) :
     Repository {
     override suspend fun getCoins(): Flow<Result<List<Coin>>> = flow {
+        emit(Result.Loading)
         val coinsFromCahs = localDataSource.getCoins()
             .map { coinApiModelList ->
                 coinApiModelList.map { coinApiModelList ->

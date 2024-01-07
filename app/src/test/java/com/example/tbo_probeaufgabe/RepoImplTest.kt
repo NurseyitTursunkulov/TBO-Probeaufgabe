@@ -75,7 +75,8 @@ class RepoImplTest {
         coVerify { localDataSourceFake.getCoins() }
         coVerify { remoteDataSourceFake.getCoins() }
         coVerify { localDataSourceFake.insertCoins(coinList) }
-        assertEquals(Result.Success(coinList.map { it.toDomainModel() }), values[0]) // Assert on the list contents
+        assertEquals(Result.Loading, values[0]) // Assert on the list contents
+        assertEquals(Result.Success(coinList.map { it.toDomainModel() }), values[1]) // Assert on the list contents
         coinList.forEach {
             coVerify { remoteDataSourceFake.getCoinHistory(it.id) }
             coinHistoryList.find { coinHistoryLocalModel -> coinHistoryLocalModel.id == it.id }?.let { coinHistoryLocalModel ->
@@ -83,7 +84,7 @@ class RepoImplTest {
             }
         }
 
-        assertEquals(Result.Success(coinsWithHistory), values[1])
+        assertEquals(Result.Success(coinsWithHistory), values[2])
     }
 
     @Test
@@ -124,6 +125,7 @@ class RepoImplTest {
         coVerify(exactly = 0) { localDataSourceFake.insertCoins(coinList) }
         coVerify(exactly = 0) { remoteDataSourceFake.getCoinHistory(any()) }
         coVerify(exactly = 0) { localDataSourceFake.insertCoinHistory(any()) }
-        assertEquals(Result.Error(ErrorType.UnknownError), values[0]) // Assert on the list contents
+        assertEquals(Result.Loading, values[0]) // Assert on the list contents
+        assertEquals(Result.Error(ErrorType.UnknownError), values[1]) // Assert on the list contents
     }
 }
