@@ -15,7 +15,6 @@ class GetCoinsUseCase(private val repository: Repository) {
     suspend fun startTorefresh() {
         while (true) {
             delay(1000 )//todo make it configurable
-            Log.d("gulen", "GetCoinsUseCase startTorefresh")
             repository.refresh()
         }
     }

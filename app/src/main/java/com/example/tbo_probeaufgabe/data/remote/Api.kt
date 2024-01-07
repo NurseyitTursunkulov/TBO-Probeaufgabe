@@ -35,22 +35,3 @@ interface Api {
     ): CoinHistoryApiModel
 
 }
-suspend fun <A> fetchResponse(
-    networkFunction: suspend () -> A
-) :NetworkResponse<A> {
-    try {
-        val res = networkFunction()
-        return NetworkResponse.Success(res)
-    } catch (e: retrofit2.HttpException) {
-        if (e.code() == 429) {// todo test
-            delay(1000)
-            Log.d("nurs", "after delay ")
-            return fetchResponse(networkFunction)//todo add max retry
-        }else {
-            return NetworkResponse.UnknownException(e)
-        }
-    }
-    catch (e: Exception) {
-        return NetworkResponse.UnknownException(e)
-    }
-}

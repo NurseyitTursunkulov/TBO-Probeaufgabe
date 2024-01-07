@@ -2,6 +2,7 @@ package com.example.tbo_probeaufgabe.data.remote
 
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
+import com.example.tbo_probeaufgabe.util.fetchResponse
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 
 

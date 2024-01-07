@@ -28,7 +28,6 @@ import com.squareup.moshi.JsonClass
 data class CoinHistoryLocalModel(
     @PrimaryKey
     val id: String,
-
     val prices: List<List<String>>,
     @Json(name = "market_caps")
     val marketCaps: List<List<String>>,

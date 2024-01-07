@@ -54,27 +54,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("nurs", "onDestroy activity")
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: MainViewModel = koinViewModel()) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier.clickable {
-        viewModel.clearDb()
-        }
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TBO_ProbeaufgabeTheme {
-        Greeting("Android")
-    }
 }

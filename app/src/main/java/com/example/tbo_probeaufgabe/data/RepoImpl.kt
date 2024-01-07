@@ -3,11 +3,11 @@ package com.example.tbo_probeaufgabe.data
 import android.util.Log
 import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
-import com.example.tbo_probeaufgabe.data.remote.fetchResponse
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel.Companion.toDomainModel
 import com.example.tbo_probeaufgabe.domain.model.Coin
 import com.example.tbo_probeaufgabe.util.ErrorType
 import com.example.tbo_probeaufgabe.util.Result
+import com.example.tbo_probeaufgabe.util.isEmpty
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -33,7 +33,6 @@ class RepoImpl(private val localDataSource: LocalDataSource, private val remoteD
                     }
                 }
             }
-        Log.d("nurs", "34 RepoImpl getCoins from repo ${coinsFromCahs.isEmpty()}")
         if (coinsFromCahs.isEmpty()) {
             val response = remoteDataSource.getCoins()
             when (response) {
@@ -52,7 +51,6 @@ class RepoImpl(private val localDataSource: LocalDataSource, private val remoteD
                                 }
                                 else -> {
                                     emit(Result.Error(ErrorType.UnknownException("${coinApiModel.id } was not able to fetch details data")))
-                                    Log.d("nurs", "${coinHistoryResponse.toString()}")//todo handle error case
                                 }
                             }
                         }
@@ -67,7 +65,6 @@ class RepoImpl(private val localDataSource: LocalDataSource, private val remoteD
         coinsFromCahs.collect {
             emit(Result.Success(it))
         }
-        Log.d("nurs", "RepoImpl 53 getCoins from repo ${coinsFromCahs.firstOrNull()}")
     }
 
     override suspend fun refresh(): Result<Unit> {
@@ -99,12 +96,4 @@ class RepoImpl(private val localDataSource: LocalDataSource, private val remoteD
             }
         }
     }
-}
-
-suspend fun <T> Flow<T>.isEmpty(): Boolean {
-    this.firstOrNull()?.let {
-        if (it is List<*>)
-            return it.isEmpty()
-        return false
-    } ?: return true
 }
