@@ -42,7 +42,7 @@ suspend fun <A> fetchResponse(
         val res = networkFunction()
         return NetworkResponse.Success(res)
     } catch (e: retrofit2.HttpException) {
-        if (e.code() == 429) {
+        if (e.code() == 429) {// todo test
             delay(1000)
             Log.d("nurs", "after delay ")
             return fetchResponse(networkFunction)

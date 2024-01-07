@@ -5,6 +5,7 @@ import com.example.tbo_probeaufgabe.data.RepoImpl
 import com.example.tbo_probeaufgabe.data.local.LocalDataSource
 import com.example.tbo_probeaufgabe.data.local.test.coinHistoryList
 import com.example.tbo_probeaufgabe.data.local.test.coinList
+import com.example.tbo_probeaufgabe.data.local.test.coinsWithHistory
 import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
@@ -73,9 +74,12 @@ class RepoImplTest {
         coVerify { localDataSourceFake.insertCoins(coinList) }
         assertEquals(coinList.map { it.toDomainModel() }, values[0]) // Assert on the list contents
         coinList.forEach {
-            coVerify {
-                remoteDataSourceFake.getCoinHistory(it.id)
+            coVerify { remoteDataSourceFake.getCoinHistory(it.id) }
+            coinHistoryList.find { coinHistoryLocalModel -> coinHistoryLocalModel.id == it.id }?.let { coinHistoryLocalModel ->
+                coVerify { localDataSourceFake.insertCoinHistory(coinHistoryLocalModel) }
             }
         }
+
+        assertEquals(coinsWithHistory, values[1])
     }
 }

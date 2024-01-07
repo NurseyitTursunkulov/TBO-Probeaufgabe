@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.map
  */
 class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) :
     Repository {
-    override suspend fun getCoins(): Flow<List<Coin>> = flow{
+    override suspend fun getCoins(): Flow<List<Coin>> = flow {
         val coinsFromCahs = localDataSource.getCoins()
             .map { coinApiModelList ->
                 coinApiModelList.map { coinApiModelList ->
@@ -40,17 +40,21 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
                     emit(coinList.map { it.toDomainModel() })
                     coinList.map { coinApiModel ->
                         coinApiModel.apply {
-                            remoteDataSource.getCoinHistory(coinApiModel.id)
-                                .let { coinHistory ->
+                            val coinHistoryResponse = fetchResponse { remoteDataSource.getCoinHistory(coinApiModel.id) }
+                            when(coinHistoryResponse) {
+                                is NetworkResponse.Success -> {
                                     localDataSource.insertCoinHistory(
-                                        coinHistory.toLocalModel(
-                                            coinApiModel.id
-                                        )
+                                        coinHistoryResponse.body.toLocalModel(coinApiModel.id)
                                     )
                                 }
+                                else -> {
+                                    Log.d("nurs", "${coinHistoryResponse.toString()}")//todo handle error case
+                                }
+                            }
                         }
                     }
                 }
+
                 else -> {
                     Log.d("nurs", "${response.toString()}")
                 }
