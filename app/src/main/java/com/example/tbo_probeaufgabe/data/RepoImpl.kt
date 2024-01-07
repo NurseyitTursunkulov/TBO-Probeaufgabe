@@ -32,12 +32,13 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
             }
         Log.d("nurs", "34 RepoImpl getCoins from repo ${coinsFromCahs.isEmpty()}")
         if (coinsFromCahs.isEmpty()) {
-            val res = fetchResponse(remoteDataSource::getCoins)
-            when (res) {
+            val response = fetchResponse(remoteDataSource::getCoins)
+            when (response) {
                 is NetworkResponse.Success -> {
-                    localDataSource.insertCoins(res.body)
-                    emit(res.body.map { it.toDomainModel() })
-                    res.body.map { coinApiModel ->
+                    val coinList = response.body
+                    localDataSource.insertCoins(coinList)
+                    emit(coinList.map { it.toDomainModel() })
+                    coinList.map { coinApiModel ->
                         coinApiModel.apply {
                             remoteDataSource.getCoinHistory(coinApiModel.id)
                                 .let { coinHistory ->
@@ -51,7 +52,7 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
                     }
                 }
                 else -> {
-                    Log.d("nurs", "${res.toString()}")
+                    Log.d("nurs", "${response.toString()}")
                 }
             }
         }
