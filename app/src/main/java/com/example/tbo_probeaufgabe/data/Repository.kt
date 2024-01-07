@@ -2,6 +2,7 @@ package com.example.tbo_probeaufgabe.data
 
 import com.example.tbo_probeaufgabe.domain.model.Coin
 import kotlinx.coroutines.flow.Flow
+import com.example.tbo_probeaufgabe.util.Result
 
 
 /**
@@ -9,5 +10,5 @@ import kotlinx.coroutines.flow.Flow
  * Repository
  */
 interface Repository {
-    suspend fun getCoins(): Flow<List<Coin>>
+    suspend fun getCoins(): Flow<Result<List<Coin>>>
 }

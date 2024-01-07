@@ -6,6 +6,7 @@ import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.fetchResponse
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel.Companion.toDomainModel
 import com.example.tbo_probeaufgabe.domain.model.Coin
+import com.example.tbo_probeaufgabe.util.Result
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -19,7 +20,7 @@ import kotlinx.coroutines.flow.map
  */
 class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: RemoteDataSource) :
     Repository {
-    override suspend fun getCoins(): Flow<List<Coin>> = flow {
+    override suspend fun getCoins(): Flow<Result<List<Coin>>> = flow {
         val coinsFromCahs = localDataSource.getCoins()
             .map { coinApiModelList ->
                 coinApiModelList.map { coinApiModelList ->
@@ -37,7 +38,7 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
                 is NetworkResponse.Success -> {
                     val coinList = response.body
                     localDataSource.insertCoins(coinList)
-                    emit(coinList.map { it.toDomainModel() })
+                    emit(Result.Success(coinList.map { it.toDomainModel() }))
                     coinList.map { coinApiModel ->
                         coinApiModel.apply {
                             val coinHistoryResponse = remoteDataSource.getCoinHistory(coinApiModel.id)
@@ -61,7 +62,7 @@ class RepoImpl(val localDataSource: LocalDataSource, val remoteDataSource: Remot
             }
         }
         coinsFromCahs.collect {
-            emit(it)
+            emit(Result.Success(it))
         }
         Log.d("nurs", "RepoImpl 53 getCoins from repo ${coinsFromCahs.firstOrNull()}")
     }

@@ -4,5 +4,5 @@ sealed class NetworkResponse<out T > {
 
     data class Success<T >(val body: T) : NetworkResponse<T>()
 
-    data class UnknownException(val exception: Exception) : NetworkResponse<Nothing>()
+    data class UnknownException(val exception: Exception) : NetworkResponse<Nothing>()//todo rename
 }

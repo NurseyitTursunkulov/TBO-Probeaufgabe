@@ -10,6 +10,7 @@ import com.example.tbo_probeaufgabe.data.remote.fetchResponse
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryApiModel
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
+import com.example.tbo_probeaufgabe.util.succeeded
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -34,9 +35,7 @@ class MainViewModel(
             withContext(Dispatchers.IO) {
                 repository.getCoins().collect {
                         Log.e("nurs", "MainViewmodel it ${it}")
-                    it.forEach {
-//                        Log.d("coinHistory", "getCoinHistoryfrom DATABASE ${it.historyPrice?.id} ${it.historyPrice?.prices?.first()}")
-                    }
+
                 }
             }
         }

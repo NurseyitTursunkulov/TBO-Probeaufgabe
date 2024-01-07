@@ -10,6 +10,7 @@ import com.example.tbo_probeaufgabe.data.remote.RemoteDataSource
 import com.example.tbo_probeaufgabe.data.remote.model.CoinApiModel
 import com.example.tbo_probeaufgabe.data.remote.model.CoinHistoryLocalModel
 import com.example.tbo_probeaufgabe.domain.model.Coin
+import com.example.tbo_probeaufgabe.util.Result
 import com.example.tbo_probeaufgabe.util.networkUtil.NetworkResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -59,7 +60,7 @@ class RepoImplTest {
         }
         val repository = RepoImpl(localDataSourceFake, remoteDataSourceFake)
 
-        val values = mutableListOf<List<Coin>>()
+        val values = mutableListOf<Result<List<Coin>>>()
         /** when
          * ---------------------------------------------------*/
 
@@ -73,7 +74,7 @@ class RepoImplTest {
         coVerify { localDataSourceFake.getCoins() }
         coVerify { remoteDataSourceFake.getCoins() }
         coVerify { localDataSourceFake.insertCoins(coinList) }
-        assertEquals(coinList.map { it.toDomainModel() }, values[0]) // Assert on the list contents
+        assertEquals(Result.Success(coinList.map { it.toDomainModel() }), values[0]) // Assert on the list contents
         coinList.forEach {
             coVerify { remoteDataSourceFake.getCoinHistory(it.id) }
             coinHistoryList.find { coinHistoryLocalModel -> coinHistoryLocalModel.id == it.id }?.let { coinHistoryLocalModel ->
@@ -81,7 +82,7 @@ class RepoImplTest {
             }
         }
 
-        assertEquals(coinsWithHistory, values[1])
+        assertEquals(Result.Success(coinsWithHistory), values[1])
     }
 
     @Test
@@ -94,7 +95,8 @@ class RepoImplTest {
 
         val remoteDataSourceFake = mockk<RemoteDataSource>()
         val localDataSourceFake = mockk<LocalDataSource>()
-        coEvery { remoteDataSourceFake.getCoins() } returns NetworkResponse.Success(coinList)
+        val exception = Exception("test exception")
+        coEvery { remoteDataSourceFake.getCoins() } returns NetworkResponse.UnknownException(exception)
         coEvery { localDataSourceFake.getCoins() } returns coinFlow
         coEvery { localDataSourceFake.insertCoins(coinList) } coAnswers {coinFlowInternal.emit(coinList) }
         coEvery { localDataSourceFake.insertCoinHistory(any()) } coAnswers { coinHistory.add(firstArg()) }
@@ -105,7 +107,7 @@ class RepoImplTest {
         }
         val repository = RepoImpl(localDataSourceFake, remoteDataSourceFake)
 
-        val values = mutableListOf<List<Coin>>()
+        val values = mutableListOf<Result<List<Coin>>>()
         /** when
          * ---------------------------------------------------*/
 
@@ -118,15 +120,7 @@ class RepoImplTest {
 
         coVerify { localDataSourceFake.getCoins() }
         coVerify { remoteDataSourceFake.getCoins() }
-        coVerify { localDataSourceFake.insertCoins(coinList) }
-        assertEquals(coinList.map { it.toDomainModel() }, values[0]) // Assert on the list contents
-        coinList.forEach {
-            coVerify { remoteDataSourceFake.getCoinHistory(it.id) }
-            coinHistoryList.find { coinHistoryLocalModel -> coinHistoryLocalModel.id == it.id }?.let { coinHistoryLocalModel ->
-                coVerify { localDataSourceFake.insertCoinHistory(coinHistoryLocalModel) }
-            }
-        }
-
-        assertEquals(coinsWithHistory, values[1])
+        coVerify(exactly = 0) { localDataSourceFake.insertCoins(coinList) }
+        assertEquals(listOf<List<Coin>>(), values[0]) // Assert on the list contents
     }
 }
